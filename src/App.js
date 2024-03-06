@@ -15,41 +15,39 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState("")
   const [searchResult, setSearchResult] = useState(null)
   let weatherImg
+  const APIURL = "YOUR_API_KEY"
 
   const search = async (city) => {
-    if (lat !== null && long !== null) {
-      try {
-        const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=13b642fee8793f432d263f27d76af97b`)
+    try {
+      if (city) {
+        const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${APIURL}`)
         const data = await response.json()
-        console.log(data)
         setLat(data[0].lat)
         setLong(data[0].lon)
-
         setSearchResult(data)
-        setLat(data[0].lat)
-      } catch (error) {
-        console.error("Error searching for city:", error.message)
+      } else {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          setLat(position.coords.latitude)
+          setLong(position.coords.longitude)
+          setSearchResult(null)
+        })
       }
+    } catch (error) {
+      console.error("Error searching for city:", error.message)
     }
   }
 
   useEffect(() => {
-    search("")
-  }, [])
+    search(searchTerm)
+  }, [searchTerm])
 
   useEffect(() => {
     const fetchData = async () => {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        setLat(position.coords.latitude)
-        setLong(position.coords.longitude)
-      })
-
       if (lat !== null && long !== null) {
         try {
-          const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&units=metric&appid=13b642fee8793f432d263f27d76af97b`)
+          const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&units=metric&appid=${APIURL}`)
           const result = await response.json()
           setData(result)
-          console.log("result", result)
           setLocation(result.name)
           setTemperature(result.main?.temp)
           setFeelTemperature(result.main?.feels_like)
@@ -65,10 +63,6 @@ export default function App() {
 
     fetchData()
   }, [lat, long])
-
-  useEffect(() => {
-    search("")
-  }, [])
 
   switch (weatherId) {
     default:
