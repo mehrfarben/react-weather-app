@@ -11,13 +11,13 @@ export default function App() {
   const [weather, setWeather] = useState(null)
   const [wind, setWind] = useState(null)
   const [humidity, setHumidity] = useState(null)
-  const [weatherId, setWeatherId] = useState(null)
+  let [weatherId, setWeatherId] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [searchResult, setSearchResult] = useState(null)
   let [timeOf, setTimeOf] = useState(null)
   let [timeZone, setTimeZone] = useState(null)
-  let formattedTime
   let weatherImg
+  const iconLink = "https://help.apple.com/assets/656912ADA28BF1B7E90BF0F6/656912B3021EA3AD750FB887/en_US/"
   const APIURL = "YOUR_API_KEY"
 
   const search = async (city) => {
@@ -70,58 +70,33 @@ export default function App() {
     fetchData()
   }, [lat, long])
 
-  switch (weatherId) {
-    default:
-      weatherImg = `https://help.apple.com/assets/656912ADA28BF1B7E90BF0F6/656912B3021EA3AD750FB887/en_US/575900edccbc7def167f7874c02aeb0b.png`
-      break
-
-    case 800: //clear
-      weatherImg = `https://help.apple.com/assets/656912ADA28BF1B7E90BF0F6/656912B3021EA3AD750FB887/en_US/575900edccbc7def167f7874c02aeb0b.png`
-      break
-
-    case 801: //brokenclouds
-      weatherImg = `https://help.apple.com/assets/656912ADA28BF1B7E90BF0F6/656912B3021EA3AD750FB887/en_US/67aaf9dbe30989c25cbde6c6ec099213.png`
-      break
-
-    case (802, 803, 804): //cloudy
-      weatherImg = `https://help.apple.com/assets/656912ADA28BF1B7E90BF0F6/656912B3021EA3AD750FB887/en_US/66117fab0f288a2867b340fa2fcde31b.png`
-      break
-
-    case (600, 601, 602, 612, 613, 615, 616, 620, 621, 622): //snow
-      weatherImg = `https://help.apple.com/assets/656912ADA28BF1B7E90BF0F6/656912B3021EA3AD750FB887/en_US/00171e3b54b97dee8c1a2f6a62272640.png`
-      break
-
-    case (500, 501, 502, 503, 504, 611, 520, 521, 522, 531): //rain
-      weatherImg = `https://help.apple.com/assets/656912ADA28BF1B7E90BF0F6/656912B3021EA3AD750FB887/en_US/00171e3b54b97dee8c1a2f6a62272640.png`
-      break
-
-    case (200, 201, 202, 210, 211, 212, 221, 230, 231, 232): //thunderstorm
-      weatherImg = `https://help.apple.com/assets/656912ADA28BF1B7E90BF0F6/656912B3021EA3AD750FB887/en_US/00171e3b54b97dee8c1a2f6a62272640.png`
-      break
-
-    case (300, 301, 302, 310, 311, 312, 313, 314, 321): //drizzle
-      weatherImg = `https://help.apple.com/assets/656912ADA28BF1B7E90BF0F6/656912B3021EA3AD750FB887/en_US/a55fef55bbeb0762a8dd329b4b8ad342.png`
-      break
-
-    case (701, 711, 721, 731, 741, 751, 762, 771, 781): //fog
-      weatherImg = `https://help.apple.com/assets/656912ADA28BF1B7E90BF0F6/656912B3021EA3AD750FB887/en_US/d35bb25d12281cd9ee5ce78a98cd2aa7.png`
-      break
+  if (weatherId === 800) {
+    weatherImg = `${iconLink}575900edccbc7def167f7874c02aeb0b.png`
+  } else if (weatherId === 801) {
+    weatherImg = `${iconLink}67aaf9dbe30989c25cbde6c6ec099213.png`
+  } else if (weatherId === 802 || 803 || 804) {
+    weatherImg = `${iconLink}66117fab0f288a2867b340fa2fcde31b.png`
+  } else if (weatherId === 600 || 601 || 602 || 612 || 613 || 615 || 616 || 620 || 621 || 622) {
+    weatherImg = `${iconLink}00171e3b54b97dee8c1a2f6a62272640.png`
+  } else if (weatherId === 500 || 501 || 502 || 503 || 504 || 611 || 520 || 521 || 522 || 531) {
+    weatherImg = `${iconLink}4417bf88c7bbcd8e24fb78ee6479b362.png`
+  } else if (weatherId === 200 || 201 || 202 || 210 || 211 || 212 || 221 || 230 || 231 || 232) {
+    weatherImg = `${iconLink}efffb1e26f6de5bf5c8adbd872a2933a.png`
+  } else if (weatherId === 300 || 301 || 302 || 310 || 311 || 312 || 313 || 314 || 321) {
+    weatherImg = `${iconLink}a55fef55bbeb0762a8dd329b4b8ad342.png`
+  } else if (weatherId === 701 || 711 || 721 || 731 || 741 || 751 || 762 || 771 || 781) {
+    weatherImg = `${iconLink}d35bb25d12281cd9ee5ce78a98cd2aa7.png`
   }
 
   function getTime() {
-    if (timeOf !== null && timeZone !== null) {
-      let unix_timestamp = timeOf
-      console.log(timeOf)
-      console.log(timeZone)
-      timeZone = timeZone * 1000
+    let unixTimestamp = timeOf + timeZone
 
-      let date = new Date((unix_timestamp + timeZone) * 1000)
-      let hours = date.getHours()
-      let minutes = "0" + date.getMinutes()
-      formattedTime = hours + ":" + minutes.substr(-2)
+    let dateObj = new Date(unixTimestamp * 1000)
+    let hours = dateObj.getUTCHours()
+    let minutes = dateObj.getUTCMinutes()
+    let formattedTime = hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0")
 
-      console.log(formattedTime)
-    }
+    return formattedTime
   }
   getTime()
 
@@ -145,14 +120,14 @@ export default function App() {
             <strong>Current Weather in:</strong> {location}
           </p>
           <p>
-            Last Update: <strong>{formattedTime}</strong>
+            Local Time: <strong>{getTime()}</strong>
           </p>
         </header>
         <div className='cardbody'>
           <div className='weather'>
             <div className='imgweather'>
               <img src={weatherImg} alt='Weather'></img>
-              <h1>{Number(temperature).toFixed(0)} °C</h1>
+              <h1>{Number(temperature).toFixed(0)}°C</h1>
             </div>
             <p className='weatherText'>
               <strong>Weather:</strong> {weather}
