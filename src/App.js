@@ -14,6 +14,9 @@ export default function App() {
   const [weatherId, setWeatherId] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [searchResult, setSearchResult] = useState(null)
+  let [timeOf, setTimeOf] = useState(null)
+  let [timeZone, setTimeZone] = useState(null)
+  let formattedTime
   let weatherImg
   const APIURL = "YOUR_API_KEY"
 
@@ -55,6 +58,9 @@ export default function App() {
           setWind(result.wind.speed)
           setHumidity(result.main.humidity)
           setWeatherId(result.weather[0].id)
+          setTimeOf(result.dt)
+          setTimeZone(result.timezone)
+          console.log(result)
         } catch (error) {
           console.error("Error fetching weather data:", error.message)
         }
@@ -103,10 +109,21 @@ export default function App() {
   }
 
   function getTime() {
-    const date = new Date()
-    const showTime = date.getHours() + ":" + (date.getMinutes() < 10 ? "0" : "") + date.getMinutes()
-    return showTime
+    if (timeOf !== null && timeZone !== null) {
+      let unix_timestamp = timeOf
+      console.log(timeOf)
+      console.log(timeZone)
+      timeZone = timeZone * 1000
+
+      let date = new Date((unix_timestamp + timeZone) * 1000)
+      let hours = date.getHours()
+      let minutes = "0" + date.getMinutes()
+      formattedTime = hours + ":" + minutes.substr(-2)
+
+      console.log(formattedTime)
+    }
   }
+  getTime()
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -122,14 +139,13 @@ export default function App() {
           ➔
         </button>
       </span>
-
       <div className='card'>
         <header className='header'>
           <p>
             <strong>Current Weather in:</strong> {location}
           </p>
           <p>
-            <strong>{getTime()}</strong>
+            Last Update: <strong>{formattedTime}</strong>
           </p>
         </header>
         <div className='cardbody'>
