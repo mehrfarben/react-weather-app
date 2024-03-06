@@ -12,7 +12,30 @@ export default function App() {
   const [wind, setWind] = useState(null)
   const [humidity, setHumidity] = useState(null)
   const [weatherId, setWeatherId] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [searchResult, setSearchResult] = useState(null)
   let weatherImg
+
+  const search = async (city) => {
+    if (lat !== null && long !== null) {
+      try {
+        const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=13b642fee8793f432d263f27d76af97b`)
+        const data = await response.json()
+        console.log(data)
+        setLat(data[0].lat)
+        setLong(data[0].lon)
+
+        setSearchResult(data)
+        setLat(data[0].lat)
+      } catch (error) {
+        console.error("Error searching for city:", error.message)
+      }
+    }
+  }
+
+  useEffect(() => {
+    search("")
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +65,10 @@ export default function App() {
 
     fetchData()
   }, [lat, long])
+
+  useEffect(() => {
+    search("")
+  }, [])
 
   switch (weatherId) {
     default:
@@ -88,46 +115,55 @@ export default function App() {
   }
 
   return (
-    <div className='card'>
-      <header className='header'>
-        <p>
-          <strong>Current Weather in:</strong> {location}
-        </p>
-        <p>
-          <strong>{getTime()}</strong>
-        </p>
-      </header>
-      <div className='cardbody'>
-        <div className='weather'>
-          <div className='imgweather'>
-            <img src={weatherImg} alt='Weather'></img>
-            <h1>{Number(temperature).toFixed(0)} °C</h1>
-          </div>
-          <p className='weatherText'>
-            <strong>Weather:</strong> {weather}
+    <>
+      <span className='search'>
+        <input className='searchInput' placeholder='Search for a city...' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        <button className='searchBtn' onClick={() => search(searchTerm)}>
+          ➔
+        </button>
+      </span>
+
+      <div className='card'>
+        <header className='header'>
+          <p>
+            <strong>Current Weather in:</strong> {location}
           </p>
-        </div>
-        <div className=' details'>
-          <div className='element'>
-            <p className='pp'>Feels Like: </p>
-            <p>
-              <strong>{Number(feeltemperature).toFixed(0)} °C</strong>
+          <p>
+            <strong>{getTime()}</strong>
+          </p>
+        </header>
+        <div className='cardbody'>
+          <div className='weather'>
+            <div className='imgweather'>
+              <img src={weatherImg} alt='Weather'></img>
+              <h1>{Number(temperature).toFixed(0)} °C</h1>
+            </div>
+            <p className='weatherText'>
+              <strong>Weather:</strong> {weather}
             </p>
           </div>
-          <div className='element'>
-            <p className='pp'>Wind</p>
-            <p>
-              <strong>{wind} m/s</strong>
-            </p>
-          </div>
-          <div className='element'>
-            <p className='pp'>Humidity</p>
-            <p>
-              <strong>{humidity}%</strong>
-            </p>
+          <div className=' details'>
+            <div className='element'>
+              <p className='pp'>Feels Like: </p>
+              <p>
+                <strong>{Number(feeltemperature).toFixed(0)} °C</strong>
+              </p>
+            </div>
+            <div className='element'>
+              <p className='pp'>Wind</p>
+              <p>
+                <strong>{wind} m/s</strong>
+              </p>
+            </div>
+            <div className='element'>
+              <p className='pp'>Humidity</p>
+              <p>
+                <strong>{humidity}%</strong>
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
