@@ -66,6 +66,7 @@ body {
   height: 200px;
   border-radius: 1rem;
   padding: 0rem 3rem 4rem;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
 .details {
@@ -106,13 +107,13 @@ img {
   margin-right: 5rem;
 }
 
-@media only screen and (max-width: 510px) {
+@media only screen and (max-width: 600px) {
   body {
     transform: scale(60%);
     transition: 100ms ease-in;
   }
 }
-@media only screen and (min-width: 510px) {
+@media only screen and (min-width: 600px) {
   body {
     transform: scale(100%);
     transition: 100ms ease-in;

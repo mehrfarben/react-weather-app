@@ -108,10 +108,16 @@ export default function App() {
     return showTime
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      search(searchTerm)
+    }
+  }
+
   return (
     <>
       <span className='search'>
-        <input className='searchInput' placeholder='Search for a city...' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        <input className='searchInput' placeholder='Search for a city...' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} onKeyDown={handleKeyDown} />
         <button className='searchBtn' onClick={() => search(searchTerm)}>
           ➔
         </button>
