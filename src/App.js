@@ -38,7 +38,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    search(searchTerm)
+    search()
   }, [searchTerm])
 
   useEffect(() => {
